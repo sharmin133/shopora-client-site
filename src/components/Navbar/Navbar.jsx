@@ -1,9 +1,12 @@
-import { useState } from "react";
+// src/components/Navbar/Navbar.jsx
+import { useState, useContext } from "react";
 import { Link, NavLink } from "react-router";
-import { FaBars, FaTimes, FaShoppingCart } from "react-icons/fa";
+import { FaBars, FaTimes } from "react-icons/fa";
+import { AuthContext } from "../../context/AuthContext";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, logout } = useContext(AuthContext);
 
   const links = [
     { name: "Home", path: "/" },
@@ -11,16 +14,10 @@ const Navbar = () => {
     { name: "Cart", path: "/cart" },
   ];
 
-  const authLinks = [
-    { name: "Login", path: "/auth/login" },
-    { name: "Register", path: "/auth/register" },
-  ];
-
   return (
     <nav className="bg-white shadow-md fixed w-full z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          
           {/* Logo */}
           <Link to="/" className="text-2xl font-bold text-red-600">
             Shopora
@@ -42,15 +39,44 @@ const Navbar = () => {
               </NavLink>
             ))}
 
-            {authLinks.map((link) => (
+            {/* Dashboard link only for logged-in users */}
+            {user && (
               <NavLink
-                key={link.name}
-                to={link.path}
-                className="text-gray-700 hover:text-red-500"
+                to="/dashboard"
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-red-600 font-semibold"
+                    : "text-gray-700 hover:text-red-500"
+                }
               >
-                {link.name}
+                Dashboard
               </NavLink>
-            ))}
+            )}
+
+            {/* Auth buttons */}
+            {user ? (
+              <button
+                onClick={logout}
+                className="btn btn-sm btn-outline btn-error"
+              >
+                Logout
+              </button>
+            ) : (
+              <>
+                <NavLink
+                  to="/auth/login"
+                  className="btn btn-sm btn-outline btn-success"
+                >
+                  Login
+                </NavLink>
+                <NavLink
+                  to="/auth/register"
+                  className="btn btn-sm btn-outline btn-primary"
+                >
+                  Register
+                </NavLink>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -79,16 +105,47 @@ const Navbar = () => {
               {link.name}
             </NavLink>
           ))}
-          {authLinks.map((link) => (
+
+          {/* Dashboard link for mobile */}
+          {user && (
             <NavLink
-              key={link.name}
-              to={link.path}
-              className="block text-gray-700 hover:text-red-500"
+              to="/dashboard"
+              className="block text-gray-700 hover:text-red-500 w-full"
               onClick={() => setIsOpen(false)}
             >
-              {link.name}
+              Dashboard
             </NavLink>
-          ))}
+          )}
+
+          {/* Auth buttons for mobile */}
+          {user ? (
+            <button
+              onClick={() => {
+                logout();
+                setIsOpen(false);
+              }}
+              className="btn btn-sm btn-outline btn-error w-full"
+            >
+              Logout
+            </button>
+          ) : (
+            <>
+              <NavLink
+                to="/auth/login"
+                className="btn btn-sm btn-outline btn-success w-full"
+                onClick={() => setIsOpen(false)}
+              >
+                Login
+              </NavLink>
+              <NavLink
+                to="/auth/register"
+                className="btn btn-sm btn-outline btn-primary w-full"
+                onClick={() => setIsOpen(false)}
+              >
+                Register
+              </NavLink>
+            </>
+          )}
         </div>
       )}
     </nav>
