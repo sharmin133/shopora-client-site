@@ -11,6 +11,11 @@ import AddProduct from "../pages/AddProduct/AddProduct";
 import Products from "../pages/Products/Products";
 import ProductDetails from "../pages/ProductDetails/ProductDetails";
 import Checkout from "../pages/Checkout/Checkout";
+import AllOrder from "../pages/Dashboard/DashboardAdmin/AdminDashboardContents/AllOrder";
+import AllProduct from "../pages/Dashboard/DashboardAdmin/AdminDashboardContents/AllProduct";
+import AllUser from "../pages/Dashboard/DashboardAdmin/AdminDashboardContents/AllUser";
+import MyOrder from "../pages/Dashboard/DashboardUser/UserDashboardContents/MyOrder";
+import MyProduct from "../pages/Dashboard/DashboardUser/UserDashboardContents/MyProduct";
 
 
 const router = createBrowserRouter([
@@ -31,6 +36,11 @@ const router = createBrowserRouter([
     {
        index:true, element:<DashboardHome></DashboardHome>
     },
+    {path:'all-order', element: <AllOrder></AllOrder>},
+    {path:'all-product', element:<AllProduct></AllProduct>},
+    {path:'all-user', element: <AllUser></AllUser>},
+    {path:'my-order', element: <MyOrder></MyOrder>},
+    {path:'my-product', element: <MyProduct></MyProduct>}
     ]},
 
     

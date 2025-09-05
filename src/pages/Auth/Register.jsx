@@ -1,8 +1,6 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router";
+import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
-
-import { isValidEmail, isValidPassword, getPasswordErrors } from "../../utils/validation";
 import { useRegisterMutation } from "../../app/api/authApi";
 
 const Register = () => {
@@ -11,40 +9,62 @@ const Register = () => {
     name: "",
     email: "",
     password: "",
-    photoUrl: "",
+    photo: "", 
   });
 
+  const [photoFile, setPhotoFile] = useState(null); 
   const [register, { isLoading }] = useRegisterMutation();
 
-  const onChange = (e) => setForm((s) => ({ ...s, [e.target.name]: e.target.value }));
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    if (name === "photo" && files.length > 0) {
+      setPhotoFile(files[0]);
+    } else {
+      setForm((s) => ({ ...s, [name]: value }));
+    }
+  };
 
   const validate = () => {
     if (!form.name.trim()) { toast.error("Name is required"); return false; }
-    if (!isValidEmail(form.email)) { toast.error("Please enter a valid email"); return false; }
-    if (!isValidPassword(form.password)) {
-      const errs = getPasswordErrors(form.password);
-      toast.error("Password invalid: " + errs.join(" "));
-      return false;
-    }
-    if (!form.photoUrl.trim()) { toast.error("Photo URL is required"); return false; }
+    if (!form.email.trim()) { toast.error("Email is required"); return false; }
+    if (!form.password.trim()) { toast.error("Password is required"); return false; }
+    if (!photoFile) { toast.error("Photo is required"); return false; }
     return true;
   };
 
-  const onSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
 
     try {
-      const res = await register({
+      // 1️⃣ Upload photo to imgbb
+      const imageForm = new FormData();
+      imageForm.append("image", photoFile);
+
+      const res = await fetch(
+        `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_image_upload_key}`,
+        {
+          method: "POST",
+          body: imageForm,
+        }
+      );
+      const data = await res.json();
+
+      if (!data.success) throw new Error("Image upload failed");
+
+      const photoUrl = data.data.url;
+
+      // 2️⃣ Send register request
+      const result = await register({
         name: form.name.trim(),
         email: form.email.trim(),
         password: form.password,
-        photo: form.photoUrl.trim(),
-      }).unwrap(); // RTK Query unwrap() to handle success/error
+        photo: photoUrl,
+      }).unwrap();
 
-      toast.success(res.message || "Registration successful");
+      toast.success(result.message || "Registration successful");
 
-      if (res.token) localStorage.setItem("token", res.token);
+      if (result.token) localStorage.setItem("token", result.token);
       setTimeout(() => navigate("/auth/login"), 800);
     } catch (err) {
       toast.error(err?.data?.message || err.message || "Registration failed");
@@ -52,72 +72,65 @@ const Register = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6 bg-black rounded-md shadow-md">
-      <h2 className="text-2xl font-semibold mb-4">Create an account</h2>
+<div className="min-h-screen p-8">
 
-      <form onSubmit={onSubmit} className="space-y-4">
+      <div className="max-w-xl mx-auto p-6 bg-gray-900 dark:bg-gray-800 rounded-md shadow-md mt-20">
+      <h2 className="text-3xl font-bold mb-6 text-white text-center">Create an account</h2>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <input
+          type="text"
+          name="name"
+          placeholder="Your full name"
+          className="w-full border rounded px-3 py-2"
+          value={form.name}
+          onChange={handleChange}
+          required
+        />
+
+        <input
+          type="email"
+          name="email"
+          placeholder="name@example.com"
+          className="w-full border rounded px-3 py-2"
+          value={form.email}
+          onChange={handleChange}
+          required
+        />
+
+        <input
+          type="password"
+          name="password"
+          placeholder="Minimum 8 chars, 1 upper, 1 lower, 1 number"
+          className="w-full border rounded px-3 py-2"
+          value={form.password}
+          onChange={handleChange}
+          required
+        />
+
+        {/* Image Upload */}
         <div>
-          <label className="block text-sm font-medium mb-1">Name</label>
+          <label className="block text-sm font-medium mb-1 text-white">Profile Photo</label>
           <input
-            name="name"
-            value={form.name}
-            onChange={onChange}
-            className="w-full border rounded px-3 py-2"
-            placeholder="Your full name"
+            type="file"
+            name="photo"
+            accept="image/*"
+            className="w-full border p-2 rounded"
+            onChange={handleChange}
+            required
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Email</label>
-          <input
-            name="email"
-            type="email"
-            value={form.email}
-            onChange={onChange}
-            className="w-full border rounded px-3 py-2"
-            placeholder="name@example.com"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-1">Password</label>
-          <input
-            name="password"
-            type="password"
-            value={form.password}
-            onChange={onChange}
-            className="w-full border rounded px-3 py-2"
-            placeholder="Minimum 8 chars, 1 upper, 1 lower, 1 number"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-1">Photo URL</label>
-          <input
-            name="photoUrl"
-            type="url"
-            value={form.photoUrl}
-            onChange={onChange}
-            className="w-full border rounded px-3 py-2"
-            placeholder="https://example.com/photo.jpg"
-          />
-        </div>
-
-        <div className="flex items-center justify-between">
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 disabled:opacity-60"
-          >
-            {isLoading ? "Registering..." : "Register"}
-          </button>
-
-          <Link to="/auth/login" className="text-sm text-gray-600 hover:text-red-600">
-            Already have an account? Login
-          </Link>
-        </div>
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 disabled:opacity-60"
+        >
+          {isLoading ? "Registering..." : "Register"}
+        </button>
       </form>
     </div>
+</div>
   );
 };
 

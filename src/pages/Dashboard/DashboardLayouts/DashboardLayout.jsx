@@ -1,4 +1,4 @@
-// src/pages/Dashboard/DashboardLayouts/DashboardLayout.jsx
+
 import { Outlet, NavLink } from "react-router";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../../context/AuthContext";
@@ -49,8 +49,9 @@ const DashboardLayouts = () => {
 
           {/* Admin links */}
           {role === "admin" && (
+            <>
             <NavLink
-              to="/dashboard/all-users"
+              to="/dashboard/all-user"
               className={({ isActive }) =>
                 `px-3 py-2 rounded font-bold ${
                   isActive ? "bg-red-500 text-white" : "text-red-700 hover:bg-red-200"
@@ -58,15 +59,47 @@ const DashboardLayouts = () => {
               }
               onClick={() => setSidebarOpen(false)}
             >
-              All Users
+              All User
             </NavLink>
+
+             
+
+
+              <NavLink
+              to="/dashboard/all-product"
+              className={({ isActive }) =>
+                `px-3 py-2 rounded font-bold ${
+                  isActive ? "bg-red-500 text-white" : "text-red-700 hover:bg-red-200"
+                }`
+              }
+              onClick={() => setSidebarOpen(false)}
+            >
+              All Product
+            </NavLink>
+
+
+
+              <NavLink
+              to="/dashboard/all-order"
+              className={({ isActive }) =>
+                `px-3 py-2 rounded font-bold ${
+                  isActive ? "bg-red-500 text-white" : "text-red-700 hover:bg-red-200"
+                }`
+              }
+              onClick={() => setSidebarOpen(false)}
+            >
+              All Order
+            </NavLink>
+
+            </>
+            
           )}
 
           {/* User links */}
           {role === "user" && (
             <>
               <NavLink
-                to="/dashboard/create-donation-request"
+                to="/dashboard/my-product"
                 className={({ isActive }) =>
                   `px-3 py-2 rounded font-bold ${
                     isActive
@@ -76,10 +109,10 @@ const DashboardLayouts = () => {
                 }
                 onClick={() => setSidebarOpen(false)}
               >
-                Create Donor Request
+                My Product
               </NavLink>
               <NavLink
-                to="/dashboard/my-requests"
+                to="/dashboard/my-order"
                 className={({ isActive }) =>
                   `px-3 py-2 rounded font-bold ${
                     isActive
@@ -89,7 +122,7 @@ const DashboardLayouts = () => {
                 }
                 onClick={() => setSidebarOpen(false)}
               >
-                My Requests
+                My Order
               </NavLink>
             </>
           )}

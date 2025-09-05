@@ -1,4 +1,4 @@
-// src/pages/Dashboard/DashboardLayouts/DashboardHome.jsx
+
 import { useContext } from "react";
 import { AuthContext } from "../../../context/AuthContext";
 import AdminDashboard from "../DashboardAdmin/AdminDashboard";

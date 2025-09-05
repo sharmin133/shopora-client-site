@@ -1,10 +1,13 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+// Product API slice
 export const productApi = createApi({
-  reducerPath: "productApi",
-  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_API_BASE_URL }),
-  tagTypes: ["Products"],
+  reducerPath: "productApi", // unique key
+  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_API_BASE_URL }), // base URL
+  tagTypes: ["Products"], // cache tag
   endpoints: (builder) => ({
+
+    // Get all products
     getProducts: builder.query({
       query: (token) => ({
         url: "/products",
@@ -12,6 +15,8 @@ export const productApi = createApi({
       }),
       providesTags: ["Products"],
     }),
+
+    // Add product
     addProduct: builder.mutation({
       query: ({ product, token }) => ({
         url: "/products",
@@ -21,7 +26,8 @@ export const productApi = createApi({
       }),
       invalidatesTags: ["Products"],
     }),
-    // ✅ নতুন endpoint: get single product by id
+
+    // Get single product by id
     getProductById: builder.query({
       query: ({ id, token }) => ({
         url: `/products/${id}`,
@@ -29,11 +35,22 @@ export const productApi = createApi({
       }),
       providesTags: (result, error, arg) => [{ type: "Products", id: arg.id }],
     }),
+
+    // Get products of logged-in user
+    getMyProducts: builder.query({
+      query: (token) => ({
+        url: "/products/my-products",
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+      providesTags: ["Products"],
+    }),
   }),
 });
 
+// Export hooks
 export const {
   useGetProductsQuery,
   useAddProductMutation,
-  useGetProductByIdQuery, // <-- Export করতে হবে
+  useGetProductByIdQuery, 
+  useGetMyProductsQuery,
 } = productApi;

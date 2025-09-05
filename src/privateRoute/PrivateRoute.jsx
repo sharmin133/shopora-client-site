@@ -1,4 +1,4 @@
-// PrivateRoute.jsx
+
 import { useContext } from "react";
 import { Navigate, useLocation } from "react-router";
 import { AuthContext } from "../context/AuthContext";
@@ -6,7 +6,7 @@ import { AuthContext } from "../context/AuthContext";
 
 const PrivateRoute = ({ children }) => {
   const { user } = useContext(AuthContext);
-  const location = useLocation(); // current path
+  const location = useLocation(); 
 
   if (!user) {
     

@@ -1,10 +1,12 @@
-// src/app/api/authApi.js
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+// Auth API slice
 export const authApi = createApi({
-  reducerPath: "authApi",
-  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_API_BASE_URL }),
+  reducerPath: "authApi", // unique key
+  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_API_BASE_URL }), // base URL
   endpoints: (builder) => ({
+
+    // Login mutation
     login: builder.mutation({
       query: (credentials) => ({
         url: "/api/auth/login",
@@ -12,6 +14,8 @@ export const authApi = createApi({
         body: credentials,
       }),
     }),
+
+    // Register mutation
     register: builder.mutation({
       query: (user) => ({
         url: "/api/auth/register",
@@ -22,4 +26,5 @@ export const authApi = createApi({
   }),
 });
 
+// Export hooks
 export const { useLoginMutation, useRegisterMutation } = authApi;
