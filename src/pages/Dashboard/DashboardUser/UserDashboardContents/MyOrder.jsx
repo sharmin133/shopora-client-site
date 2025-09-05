@@ -1,4 +1,3 @@
-
 import React, { useContext, useState } from "react";
 import { AuthContext } from "../../../../context/AuthContext";
 import { useGetMyOrdersQuery } from "../../../../app/api/orderApi";
@@ -14,6 +13,10 @@ const MyOrder = () => {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+
+  // Filters
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [dateFilter, setDateFilter] = useState("");
 
   if (!user)
     return (
@@ -43,15 +46,19 @@ const MyOrder = () => {
       </p>
     );
 
-  // Only include relevant orders (Pending or Confirmed)
-  const confirmedOrders = orders.filter(
-    (order) => order.status === "Pending" || order.status === "Confirmed"
-  );
+  // Apply filters
+  const filteredOrders = orders.filter((order) => {
+    const statusMatch = statusFilter === "all" || order.status === statusFilter;
+    const dateMatch =
+      !dateFilter ||
+      new Date(order.createdAt).toISOString().slice(0, 10) === dateFilter;
+    return statusMatch && dateMatch;
+  });
 
   // Pagination logic
-  const totalPages = Math.ceil(confirmedOrders.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedOrders = confirmedOrders.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedOrders = filteredOrders.slice(startIndex, startIndex + itemsPerPage);
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
@@ -65,9 +72,30 @@ const MyOrder = () => {
         My Orders
       </h2>
 
+      {/* Filters */}
+      <div className="flex gap-4 mb-4">
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="border p-2 rounded bg-gray-500"
+        >
+          <option value="all">All Status</option>
+          <option value="Pending">Pending</option>
+          <option value="Confirmed">Confirmed</option>
+          <option value="Completed">Completed</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+
+        <input
+          type="date"
+          value={dateFilter}
+          onChange={(e) => setDateFilter(e.target.value)}
+          className="border p-2 rounded"
+        />
+      </div>
+
       <div className="overflow-x-auto">
         <table className="min-w-full shadow-md rounded-lg overflow-hidden">
-          {/* Table header */}
           <thead className="bg-red-600 text-white">
             <tr>
               <th className="px-4 py-2 text-left">#</th>
@@ -79,25 +107,31 @@ const MyOrder = () => {
             </tr>
           </thead>
 
-          {/* Table body */}
           <tbody className="bg-white dark:bg-black">
             {paginatedOrders.map((order, index) => (
-              <tr key={order._id} className="border-b border-gray-300 dark:border-gray-700">
+              <tr
+                key={order._id}
+                className="border-b border-gray-300 dark:border-gray-700"
+              >
                 <td className="px-4 py-2 text-black dark:text-white">
                   {startIndex + index + 1}
                 </td>
                 <td className="px-4 py-2 text-black dark:text-white">{order._id}</td>
                 <td className="px-4 py-2 text-black dark:text-white">{order.status}</td>
-                <td className="px-4 py-2 text-black dark:text-white">${order.total.toFixed(2)}</td>
+                <td className="px-4 py-2 text-black dark:text-white">
+                  ${order.total.toFixed(2)}
+                </td>
                 <td className="px-4 py-2 text-black dark:text-white">
                   {order.cartItems.map((item) => (
                     <div key={item.id}>
-                      {item.name} x {item.quantity} (${(item.price * item.quantity).toFixed(2)})
+                      {item.name} x {item.quantity} ($
+                      {(item.price * item.quantity).toFixed(2)})
                     </div>
                   ))}
                 </td>
                 <td className="px-4 py-2 text-black dark:text-white">
-                  {order.shipping.address}, {order.shipping.city}, {order.shipping.postalCode}, {order.shipping.country}
+                  {order.shipping.address}, {order.shipping.city},{" "}
+                  {order.shipping.postalCode}, {order.shipping.country}
                 </td>
               </tr>
             ))}

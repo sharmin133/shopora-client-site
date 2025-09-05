@@ -1,12 +1,57 @@
-# React + Vite
+Shopora Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend of the Shopora e-commerce application built with [your framework, e.g., React/Vite].
 
-Currently, two official plugins are available:
+Prerequisites
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Node.js (v18+ recommended)
 
-## Expanding the ESLint configuration
+npm or yarn
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Access to the backend API (deployed or local)
+
+Getting Started
+
+Clone the repository
+
+git clone <your-client-repo-url>
+cd shopora-client
+
+
+Install dependencies
+
+npm install
+# or
+yarn install
+
+
+Set up environment variables
+
+Create a .env file in the root of the project:
+
+VITE_API_BASE_URL=https://shopora-server.vercel.app
+VITE_image_upload_key=<your-imgbb-key>
+
+
+VITE_API_BASE_URL: Your backend API URL (deployed on Vercel or local)
+
+VITE_image_upload_key: API key for image upload (if using imgbb)
+
+Run the development server
+
+npm run dev
+# or
+yarn dev
+
+
+The client will run at http://localhost:5173
+ (default for Vite). Open your browser to see the app.
+
+Build for production
+
+npm run build
+# or
+yarn build
+
+
+The production-ready files will be in the dist folder. You can deploy these to Vercel, Netlify, or any static hosting service.

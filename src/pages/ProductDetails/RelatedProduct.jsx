@@ -58,4 +58,5 @@ const RelatedProduct = ({ category, currentId }) => {
   );
 };
 
+
 export default RelatedProduct;
