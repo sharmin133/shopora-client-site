@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-// Helper: get cart from LocalStorage
 const getCartFromLocalStorage = () => {
   try {
     const storedCart = localStorage.getItem("cartItems");
@@ -12,8 +11,8 @@ const getCartFromLocalStorage = () => {
 };
 
 const initialState = {
-  items: getCartFromLocalStorage(), // cart items
-  isCartOpen: false, // cart visibility
+  items: getCartFromLocalStorage(), 
+  isCartOpen: false, 
 };
 
 const cartSlice = createSlice({
@@ -21,7 +20,6 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
 
-    // Add item to cart
     addToCart: (state, action) => {
       const item = action.payload;
       const existing = state.items.find((i) => i.id === item.product._id);
@@ -37,7 +35,7 @@ const cartSlice = createSlice({
       localStorage.setItem("cartItems", JSON.stringify(state.items));
     },
 
-    // Remove item from cart
+    
     removeFromCart: (state, action) => {
       state.items = state.items.filter((item) => item.id !== action.payload);
       localStorage.setItem("cartItems", JSON.stringify(state.items));

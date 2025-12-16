@@ -1,4 +1,4 @@
-Shopora Client
+Shopora 
 
 This is the frontend of the Shopora e-commerce application built with [your framework, e.g., React/Vite].
 

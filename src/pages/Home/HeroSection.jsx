@@ -11,7 +11,7 @@ const sliderImages = [
 const HeroSection = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Auto Slider Logic
+ 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % sliderImages.length);
@@ -21,7 +21,6 @@ const HeroSection = () => {
 
   return (
     <div className="relative w-screen h-[30vh] md:h-[90vh] overflow-hidden bg-black">
-      {/* Slider Section */}
       <div
         className="flex transition-transform duration-700 ease-in-out h-full"
         style={{ transform: `translateX(-${currentIndex * 100}vw)` }} 
