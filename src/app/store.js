@@ -8,8 +8,8 @@ import { userApi } from "./api/userApi";
 
 export const store = configureStore({
   reducer: {
-    cart: cartReducer, // cart state
-    [authApi.reducerPath]: authApi.reducer, // auth API
+    cart: cartReducer,
+    [authApi.reducerPath]: authApi.reducer, 
     [productApi.reducerPath]: productApi.reducer, // product API
     [orderApi.reducerPath]: orderApi.reducer, // order API
     [userApi.reducerPath]: userApi.reducer, // user API
